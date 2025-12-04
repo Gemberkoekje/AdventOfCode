@@ -38,6 +38,42 @@ public static partial class StringExtensions
         var index = 0;
         return list.Select(v => v.Select(v2 => new IndexedListItem<T>((T)Convert.ChangeType(v2, typeof(T)),index++)).ToArray()).ToArray();
     }
+
+    public static Dictionary<(int X, int Y), T> ReadAndCoordList<T>(this string input) where T : IComparable<T>
+    {
+        var list = input.ReadList().Select(v => v.Select(x => $"{x}")).ToArray();
+        var result = new Dictionary<(int X, int Y), T>();
+        var x = 0;
+        var y = 0;
+        foreach(var line in list)
+        {
+            foreach(var item in line)
+            {
+                result.Add((x, y), (T)Convert.ChangeType(item, typeof(T)));
+                x++;
+            }
+            y++;
+        }
+        return result;
+    }
+
+    public static Dictionary<(int X, int Y), int> ReadAndCoordList(this string input, string yesValue)
+    {
+        var list = input.ReadList().Select(v => v.Select(x => $"{x}")).ToArray();
+        var result = new Dictionary<(int X, int Y), int>();
+        var y = 0;
+        foreach (var line in list)
+        {
+            var x = 0;
+            foreach (var item in line)
+            {
+                result.Add((x, y), item == yesValue ? 1 : 0);
+                x++;
+            }
+            y++;
+        }
+        return result;
+    }
 }
 
 public record struct IndexedListItem<T>(T value, int index) : IComparable<IndexedListItem<T>> where T : IComparable<T>

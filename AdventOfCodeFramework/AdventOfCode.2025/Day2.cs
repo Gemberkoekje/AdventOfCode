@@ -18,6 +18,10 @@ public sealed class Day2 : ICanGiveASolution
     public void Day2_2(string input, string answer)
         => Solution2(input).ShouldBe(answer);
 
+    // Basic solution idea:
+    // Cut the number in half. Go through the first half, creating invalid ID's by repeating the first half. Then see if they fit within the range, and add it to the list if it does.
+    // For the second part, cut the number in more parts, and do the same. Don't double count any duplicates.
+
     public string Solution1(string input)
     {
         var values = input.ReadList(",", "-");
@@ -94,23 +98,27 @@ public sealed class Day2 : ICanGiveASolution
         return $"{validids.Sum(v => v)}";
     }
 
-    private static bool ResolveFor(ref HashSet<long> validids, string smallest, string largest, int amountofnumbers)
+    private static bool ResolveFor(ref HashSet<long> validids, string smallest, string largest, int divisor)
     {
-        if (smallest.Length % amountofnumbers != 0 && largest.Length % amountofnumbers != 0)
+        // If neither are divisible, no valid IDs can be formed. Example: 123-456 with divisor 2 would never be able to form valid ID's: 99 is below the range, 1010 is above.
+        if (smallest.Length % divisor != 0 && largest.Length % divisor != 0)
             return false;
-        if (smallest.Length % amountofnumbers != 0 && largest.Length % amountofnumbers == 0)
+        // If one is divisible and the other is not, adjust the non-divisible one to the nearest valid length.
+        if (smallest.Length % divisor != 0 && largest.Length % divisor == 0)
         {
             smallest = "1000000000000000".Substring(0, largest.Length);
         }
-        if (largest.Length % amountofnumbers != 0 && smallest.Length % amountofnumbers == 0)
+        if (largest.Length % divisor != 0 && smallest.Length % divisor == 0)
         {
             largest = "999999999999999".Substring(0, smallest.Length);
         }
+        // I think I can remove this check as smallest and largest should be the same length here, but leaving it for safety.
         var length = Math.Max(smallest.Length, largest.Length);
-        if (length % amountofnumbers != 0)
+        if (length % divisor != 0)
         {
             length++;
         }
+        // Add leading zeroes. Example: 998-1012 with divisor 2 becomes 0998-1012
         if (smallest.Length != length)
         {
             smallest = smallest.PadLeft(length, '0');
@@ -119,20 +127,24 @@ public sealed class Day2 : ICanGiveASolution
         {
             largest = largest.PadLeft(length, '0');
         }
+        // Make a list of segments. Example: 0998-1012 with divisor 2 becomes smallest: [09, 98] largest: [10, 12]
         var smallestlist = new List<long>();
-        for (var i = 0; i < amountofnumbers; i++)
+        for (var i = 0; i < divisor; i++)
         {
-            smallestlist.Add(long.Parse(smallest.Substring(i * (length / amountofnumbers), length / amountofnumbers)));
+            smallestlist.Add(long.Parse(smallest.Substring(i * (length / divisor), length / divisor)));
         }
         var largestlist = new List<long>();
-        for (var i = 0; i < amountofnumbers; i++)
+        for (var i = 0; i < divisor; i++)
         {
-            largestlist.Add(long.Parse(largest.Substring(i * (length / amountofnumbers), length / amountofnumbers)));
+            largestlist.Add(long.Parse(largest.Substring(i * (length / divisor), length / divisor)));
         }
 
+        // Go through the most significant number from smallest to largest.
         for (var i = smallestlist[0]; i <= largestlist[0]; i++)
         {
-            var id = long.Parse(CreateValidId(amountofnumbers, i));
+            // Create valid IDs by repeating the number 'divisor' times. Example: for divisor 2, 9 becomes 99.
+            var id = long.Parse(CreateValidId(divisor, i));
+            // Then simply check whether the ID is within range. So 99 is between 95 and 115, but 1010 is not.
             if (id >= long.Parse(smallest) && id <= long.Parse(largest))
                 validids.Add(id);
         }
