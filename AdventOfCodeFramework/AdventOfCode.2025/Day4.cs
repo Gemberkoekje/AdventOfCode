@@ -1,6 +1,5 @@
 using AdventOfCode.Framework;
 using AdventOfCodeFramework;
-using DotNetProjectFile.Resx;
 using System.Collections.Generic;
 
 namespace AdventOfCode2025;
@@ -10,7 +9,7 @@ public sealed class Day4 : ICanGiveASolution
     [Theory]
     [InlineData("..@@.@@@@.\r\n@@@.@.@.@@\r\n@@@@@.@.@@\r\n@.@@@@..@.\r\n@@.@@@@.@@\r\n.@@@@@@@.@\r\n.@.@.@.@@@\r\n@.@@@.@@@@\r\n.@@@@@@@@.\r\n@.@.@@@.@.", "13")]
     [InlineData("...\r\n.@.\r\n...", "1")]
-    [FileData(typeof(Day4), "1437")] //Too low
+    [FileData(typeof(Day4), "1437")]
     public void Day4_1(string input, string answer)
         => Solution1(input).ShouldBe(answer);
 
