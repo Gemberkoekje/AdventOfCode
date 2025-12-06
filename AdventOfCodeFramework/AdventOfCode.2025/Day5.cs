@@ -28,7 +28,7 @@ public sealed class Day5 : ICanGiveASolution
         var total = 0;
         foreach (var value in ingredientlist)
         {
-            if(freshlist.Any(v => v[0] <= value && v[1] >= value))
+            if (freshlist.Any(v => v[0] <= value && v[1] >= value))
             {
                 total++;
             }

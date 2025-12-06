@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace AdventOfCodeFramework;
 
 public static partial class StringExtensions
@@ -74,6 +76,14 @@ public static partial class StringExtensions
         }
         return result;
     }
+
+
+    public static T[] ReadListRegex<T>(this string input, string regex)
+    {
+        var matches = Regex.Matches(input, regex);
+        return matches.Select(m => (T)Convert.ChangeType(m.Value, typeof(T))).ToArray();
+    }
+
 }
 
 public record struct IndexedListItem<T>(T value, int index) : IComparable<IndexedListItem<T>> where T : IComparable<T>
