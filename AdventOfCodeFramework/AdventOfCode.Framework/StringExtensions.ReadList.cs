@@ -10,6 +10,12 @@ public static partial class StringExtensions
         return list;
     }
 
+    public static char[][] ReadAndSplitList(this string input)
+    {
+        var list = input.ReadList();
+        return list.Select(v => v.ToArray()).ToArray();
+    }
+
     public static string[][] ReadList(this string input, string splitcharacter1, string splitcharacter2)
     {
         var list = input.Split(splitcharacter1);
@@ -26,6 +32,12 @@ public static partial class StringExtensions
     {
         var list = input.ReadList();
         return list.Select(v2 => (T)Convert.ChangeType(v2, typeof(T))).ToArray();
+    }
+
+    public static T[][] ReadListWithMultipleWhiteSpaces<T>(this string input)
+    {
+        var list = input.ReadList(" ");
+        return list.Select(v => v.Where(v2 => !string.IsNullOrWhiteSpace(v2)).Select(v2 => (T)Convert.ChangeType(v2, typeof(T))).ToArray()).ToArray();
     }
 
     public static T[][] ReadList<T>(this string input, string splitcharacter)
