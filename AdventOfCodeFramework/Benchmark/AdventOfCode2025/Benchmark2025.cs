@@ -14,6 +14,7 @@ public class Benchmark2025
         Day5Input = ReadFromFile(typeof(Day5));
         Day6Input = ReadFromFile(typeof(Day6));
         Day7Input = ReadFromFile(typeof(Day7));
+        Day8Input = ReadFromFile(typeof(Day8));
     }
 
     public Day1 Day1 = new Day1();
@@ -85,13 +86,24 @@ public class Benchmark2025
     public Day7 Day7 = new Day7();
     public string Day7Input;
 
-    [Benchmark(Description = "2025-07-1")]
+    //[Benchmark(Description = "2025-07-1")]
     public string Day7_1() =>
         Day7.Solution1(Day7Input);
 
-    [Benchmark(Description = "2025-07-2")]
+    //[Benchmark(Description = "2025-07-2")]
     public string Day7_2() =>
         Day7.Solution2(Day7Input);
+
+    public Day8 Day8 = new Day8();
+    public string Day8Input;
+
+    [Benchmark(Description = "2025-08-1")]
+    public string Day8_1() =>
+        Day8.Solution1(Day8Input);
+
+    [Benchmark(Description = "2025-08-2")]
+    public string Day8_2() =>
+        Day8.Solution2(Day8Input);
 
     public string ReadFromFile(Type @class)
     {

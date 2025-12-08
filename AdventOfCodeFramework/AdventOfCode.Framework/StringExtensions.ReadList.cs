@@ -34,6 +34,20 @@ public static partial class StringExtensions
         return list.Select(v2 => (T)Convert.ChangeType(v2, typeof(T))).ToArray();
     }
 
+    public static IEnumerable<(T, T, T)> ReadListAndCastToTuple<T>(this string input)
+    {
+        var list = input.ReadList();
+        foreach (var item in list)
+        {
+            var parts = item.Split(",");
+            if (parts.Length != 3)
+            {
+                throw new Exception("Invalid input for tuple");
+            }
+            yield return ((T)Convert.ChangeType(parts[0], typeof(T)), (T)Convert.ChangeType(parts[1], typeof(T)), (T)Convert.ChangeType(parts[2], typeof(T)));
+        }
+    }
+
     public static T[][] ReadListWithMultipleWhiteSpaces<T>(this string input)
     {
         var list = input.ReadList(" ");
