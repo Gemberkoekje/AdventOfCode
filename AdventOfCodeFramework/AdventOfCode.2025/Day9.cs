@@ -24,7 +24,7 @@ public sealed class Day9 : ICanGiveASolution
     [Theory]
     [InlineData("7,1\r\n11,1\r\n11,7\r\n9,7\r\n9,5\r\n2,5\r\n2,3\r\n7,3", "24")]
     [InlineData("1,1\r\n3,1\r\n6,2\r\n8,2\r\n3,3\r\n6,3\r\n1,5\r\n8,5", "15")]
-    [FileData(typeof(Day9), "4600181596")] // Too high
+    [FileData(typeof(Day9), "1603439684")]
     public void Day9_2(string input, string answer)
         => Solution2(input).ShouldBe(answer);
 
@@ -51,6 +51,18 @@ public sealed class Day9 : ICanGiveASolution
     public string Solution2(string input)
     {
         var set = input.ReadListAndCastToTuple2D<long>().OrderBy(s => s.Y).ThenBy(s => s.X).ToList();
+        var lines = new List<((long X, long Y), (long X, long Y))>();
+        for (int a = 0; a < set.Count(); a++)
+        {
+            var others = set.Where(s => s != set[a] && (s.X == set[a].X || s.Y == set[a].Y)).ToList();
+            for (int b = 0; b < others.Count(); b++)
+            {
+                if (!lines.Any(l => l == (others[b], set[a])))
+                {
+                    lines.Add((set[a], others[b]));
+                }
+            }
+        }
         long largest = 0;
         for (int a = 0; a < set.Count(); a++)
         {
@@ -58,37 +70,15 @@ public sealed class Day9 : ICanGiveASolution
             {
                 var item = set[a];
                 var other = set[b];
-                var pointsToCheck = set.Where(s => s != item && s != other && (s.X == item.X || s.Y == item.Y));
-                bool blocked = false;
-                foreach (var point in pointsToCheck)
+                bool docontinue = false;
+                foreach(var line in lines)
                 {
-                    if (point.X == item.X && point.Y > Math.Min(item.Y, other.Y) && point.Y < Math.Max(item.Y, other.Y))
+                    if (LineIntersectsWithRect(line.Item1, line.Item2, (Math.Min(item.X, other.X), Math.Min(item.Y, other.Y)), (Math.Max(item.X, other.X), Math.Max(item.Y, other.Y))))
                     {
-                        blocked = true;
-                    }
-                    if (point.Y == item.Y && point.X > Math.Min(item.X, other.X) && point.X < Math.Max(item.X, other.X))
-                    {
-                        blocked = true;
+                        docontinue = true;
                     }
                 }
-                if (blocked)
-                {
-                    continue;
-                }
-                var pointsToCheck2 = set.Where(s => s != item && s != other && (s.X == other.X || s.Y == other.Y));
-                bool blocked2 = false;
-                foreach (var point in pointsToCheck2)
-                {
-                    if (point.X == other.X && point.Y > Math.Min(item.Y, other.Y) && point.Y < Math.Max(item.Y, other.Y))
-                    {
-                        blocked2 = true;
-                    }
-                    if (point.Y == other.Y && point.X > Math.Min(item.X, other.X) && point.X < Math.Max(item.X, other.X))
-                    {
-                        blocked2 = true;
-                    }
-                }
-                if (blocked2)
+                if(docontinue)
                 {
                     continue;
                 }
@@ -100,5 +90,13 @@ public sealed class Day9 : ICanGiveASolution
             }
         }
         return $"{largest}";
+    }
+    public bool LineIntersectsWithRect((long X, long Y) lineStart, (long X, long Y) lineEnd, (long X, long Y) rectTopLeft, (long X, long Y) rectBottomRight)
+    {
+        if (lineStart.X >= rectBottomRight.X && lineEnd.X >= rectBottomRight.X) return false;
+        if (lineStart.X <= rectTopLeft.X && lineEnd.X <= rectTopLeft.X) return false;
+        if (lineStart.Y >= rectBottomRight.Y && lineEnd.Y >= rectBottomRight.Y) return false;
+        if (lineStart.Y <= rectTopLeft.Y && lineEnd.Y <= rectTopLeft.Y) return false;
+        return true;
     }
 }
