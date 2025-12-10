@@ -22,7 +22,7 @@ public sealed class Day8 : ICanGiveASolution
 
     public string Solution1(string input)
     {
-        var set = input.ReadListAndCastToTuple<long>().ToList();
+        var set = input.ReadListAndCastToTuple3D<long>().ToList();
         int amount = 1000;
         if (set.Count() == 20)
             amount = 10;
@@ -79,7 +79,7 @@ public sealed class Day8 : ICanGiveASolution
 
     public string Solution2(string input)
     {
-        var set = input.ReadListAndCastToTuple<long>().ToList();
+        var set = input.ReadListAndCastToTuple3D<long>().ToList();
         long total = 0;
         var hashset = new HashSet<((long X, long Y, long Z) Item, (long X, long Y, long Z) Other, long DistSq)>();
         for (int a = 0; a < set.Count(); a++)
